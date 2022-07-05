@@ -1,0 +1,12 @@
+{
+    "json.schemas": [
+
+    {
+        "fileMatch": [
+            "/**/*.circuit.json"
+        ],
+        "url": "./circuits/circuit_schema.json"
+    }
+    ],
+    "julia.NumThreads": 8,
+}

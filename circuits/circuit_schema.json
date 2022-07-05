@@ -1,0 +1,129 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "definitions": {
+        "triop": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "op": {
+                    "type": "string",
+                    "enum": [
+                        "ccz",
+                        "ccx"
+                    ]
+                },
+                "depends-on": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "qubits": {
+                    "type": "array",
+                    "minItems": 3,
+                    "maxItems": 3,
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "id",
+                "op",
+                "qubits"
+            ]
+        },
+        "binop": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "op": {
+                    "type": "string",
+                    "enum": [
+                        "CX",
+                        "cxX",
+                        "cz"
+                    ]
+                },
+                "depends-on": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "qubits": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "id",
+                "op",
+                "qubits"
+            ]
+        },
+        "unop": {
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "op": {
+                    "type": "string",
+                    "enum": [
+                        "tz",
+                        "tx",
+                        "mx",
+                        "mz",
+                        "sz",
+                        "sx"
+                    ]
+                },
+                "depends-on": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "qubits": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "id",
+                "op",
+                "qubits"
+            ]
+        }
+    },
+    "type": "array",
+    "items": {
+        "type": "object",
+        "anyOf": [
+            {
+                "$ref": "#/definitions/triop"
+            },
+            {
+                "$ref": "#/definitions/binop"
+            },
+            {
+                "$ref": "#/definitions/unop"
+            }
+        ]
+    }
+}

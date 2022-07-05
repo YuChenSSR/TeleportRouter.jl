@@ -1,0 +1,47 @@
+[
+    {
+        "id": 1,
+        "depends-on": [],
+        "op": "cxX",
+        "qubits": [
+            3,
+            4
+        ]
+    },
+    {
+        "id": 2,
+        "depends-on": [],
+        "op": "mx",
+        "qubits": [
+            1
+        ]
+    },
+    {
+        "id": 3,
+        "depends-on": [],
+        "qubits": [
+            1,
+            2
+        ],
+        "op": "CX"
+    },
+    {
+        "id": 4,
+        "depends-on": [
+            3
+        ],
+        "op": "tx",
+        "qubits": [
+            3
+        ]
+    },
+    {
+        "id": 5,
+        "depends-on": [],
+        "op": "CX",
+        "qubits": [
+            1,
+            2
+        ]
+    }
+]
