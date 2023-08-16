@@ -5,10 +5,10 @@
 @testset "Topological Sort" begin
     @testset "topological_sort" begin
         dag = SimpleDiGraph(5)
-        LightGraphs.add_edge!(dag, 1,4)
-        LightGraphs.add_edge!(dag, 2,4)
-        LightGraphs.add_edge!(dag, 2,3)
-        LightGraphs.add_edge!(dag, 3,5)
+        LightGraphs.add_edge!(dag, 1, 4)
+        LightGraphs.add_edge!(dag, 2, 4)
+        LightGraphs.add_edge!(dag, 2, 3)
+        LightGraphs.add_edge!(dag, 3, 5)
         top_sorted = TeleportRouter.topological_sort(dag)
         @test Set(top_sorted) == Set(1:5)
         @test findfirst(x -> x == 1, top_sorted) < findfirst(x -> x == 4, top_sorted)
@@ -22,31 +22,31 @@
     end
     @testset "layers" begin
         dag = SimpleDiGraph(5)
-        LightGraphs.add_edge!(dag, 1,4)
-        LightGraphs.add_edge!(dag, 2,4)
-        LightGraphs.add_edge!(dag, 2,3)
-        LightGraphs.add_edge!(dag, 3,5)
+        LightGraphs.add_edge!(dag, 1, 4)
+        LightGraphs.add_edge!(dag, 2, 4)
+        LightGraphs.add_edge!(dag, 2, 3)
+        LightGraphs.add_edge!(dag, 3, 5)
         layers = TeleportRouter.layers(dag)
-        @test Set(layers[1]) == Set([1,2])
-        @test Set(layers[2]) == Set([3,4])
+        @test Set(layers[1]) == Set([1, 2])
+        @test Set(layers[2]) == Set([3, 4])
         @test layers[3] == [5]
 
-        LightGraphs.add_edge!(dag, 1,5)
+        LightGraphs.add_edge!(dag, 1, 5)
         layers = TeleportRouter.layers(dag)
-        @test Set(layers[1]) == Set([1,2])
-        @test Set(layers[2]) == Set([3,4])
+        @test Set(layers[1]) == Set([1, 2])
+        @test Set(layers[2]) == Set([3, 4])
         @test layers[3] == [5]
 
-        LightGraphs.add_edge!(dag, 2,5)
+        LightGraphs.add_edge!(dag, 2, 5)
         layers = TeleportRouter.layers(dag)
-        @test Set(layers[1]) == Set([1,2])
-        @test Set(layers[2]) == Set([3,4])
+        @test Set(layers[1]) == Set([1, 2])
+        @test Set(layers[2]) == Set([3, 4])
         @test layers[3] == [5]
 
-        LightGraphs.rem_edge!(dag, 3,5)
+        LightGraphs.rem_edge!(dag, 3, 5)
         layers = TeleportRouter.layers(dag)
-        @test Set(layers[1]) == Set([1,2])
-        @test Set(layers[2]) == Set([3,4,5])
+        @test Set(layers[1]) == Set([1, 2])
+        @test Set(layers[2]) == Set([3, 4, 5])
 
         # Add cycle
         LightGraphs.add_edge!(dag, 4, 1)
@@ -54,7 +54,7 @@
 
         # Get layers of a random graph
         nr_nodes = 10000
-        random_dag = random_orientation_dag(SimpleGraph(nr_nodes, div(nr_nodes*(nr_nodes-1), 20)))
+        random_dag = random_orientation_dag(SimpleGraph(nr_nodes, div(nr_nodes * (nr_nodes - 1), 20)))
         @test sum(length, TeleportRouter.layers(random_dag)) == nr_nodes
 
         # Add cycle

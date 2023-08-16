@@ -3,17 +3,7 @@
 # and Samples. See LICENSE in the project root for license information.
 
 const GATE_COSTS = Dict(
-    "swap" => 2
-    , "cx" => 2
-    , "CX" => 2
-    , "cxX" => 2*3 + 2 # 2*2 Hadamard + cnot
-    , "cz" => 2*3 + 2
-    , "tz" => 0 # Assume performed on boundary
-    , "tx" => 0
-    , "sz" => 0
-    , "sx" => 0
-    , "mx" => 0
-    , "mz" => 0
+    "swap" => 2, "cx" => 2, "CX" => 2, "cxX" => 2 * 3 + 2, "cz" => 2 * 3 + 2, "tz" => 0, "tx" => 0, "sz" => 0, "sx" => 0, "mx" => 0, "mz" => 0
 )
 
 const HADAMARD_OPS = ["ccx", "cxX", "cz", "mx", "tx"]

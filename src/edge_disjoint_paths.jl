@@ -37,9 +37,9 @@ The heuristic_dist function takes the source and destination vertices.
 function a_star(
     graph,
     terminal::TerminalPair;
-    distmx:: AbstractMatrix{T} = weights(graph),
-    heuristic_dist::Function = (n, t) -> 0,
-)::Array{Edge{Int}} where T
+    distmx::AbstractMatrix{T}=weights(graph),
+    heuristic_dist::Function=(n, t) -> 0
+)::Array{Edge{Int}} where {T}
     # Partially apply the destination vertex.
     heur_dist_dest = from -> heuristic_dist(from, to(terminal))
     LightGraphs.a_star(graph, from(terminal), to(terminal), distmx, heur_dist_dest)
@@ -55,11 +55,11 @@ O(√|E|)-approximation algorithms from Kleinberg & Tardos "Algorithm Design" §
 function greedy_edp(
     graph,
     terminals;
-    heuristic_dist::Function = (n, t) -> 0,
-) :: Vector{Path}
+    heuristic_dist::Function=(n, t) -> 0
+)::Vector{Path}
     graph = copy(graph) # TODO: Get rid of copy
     terminals = Set(terminals)
-    ed_paths = Path[] 
+    ed_paths = Path[]
 
     while true
         # Find shortest paths between all remaining terminal vertices
@@ -67,7 +67,7 @@ function greedy_edp(
         sizehint!(paths, length(terminals))
         for (i, terminal) in enumerate(terminals)
             shortest_path =
-                a_star(graph, terminal, heuristic_dist = heuristic_dist)
+                a_star(graph, terminal, heuristic_dist=heuristic_dist)
             # Terminals cannot be connected so we delete them
             if isempty(shortest_path)
                 delete!(terminals, terminal)
@@ -110,9 +110,9 @@ Here we cannot use the bound because all paths must be routed at some point.
 function greedier_edp(
     graph,
     terminals;
-    heuristic_dist::Function = (n, t) -> 0,
-    rng = Random.default_rng(),
-) :: Vector{Path}
+    heuristic_dist::Function=(n, t) -> 0,
+    rng=Random.default_rng()
+)::Vector{Path}
     distmx = LazyDistance(graph)
     ed_paths = Path[]
     terminals = collect(terminals)
@@ -120,7 +120,7 @@ function greedier_edp(
     # Proceed through terminals in random order
     Random.shuffle!(rng, terminals)
     for terminal in terminals
-        shortest_path = a_star(graph, terminal; distmx = distmx, heuristic_dist = heuristic_dist)
+        shortest_path = a_star(graph, terminal; distmx=distmx, heuristic_dist=heuristic_dist)
         # Check if path is longer than graph size, if so we have reused an edge
         distance = 0
         for edge in shortest_path

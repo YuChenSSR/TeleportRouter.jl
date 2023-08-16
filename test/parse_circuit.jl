@@ -3,7 +3,7 @@
 # and Samples. See LICENSE in the project root for license information.
 
 @testset "Parse circuit" begin
-    (ops, dependent_on) = open(joinpath(".","circuits","example.circuit.json"), "r") do io
+    (ops, dependent_on) = open(joinpath(".", "circuits", "example.circuit.json"), "r") do io
         parse_circuit(io)
     end
     @test length(ops) == 5

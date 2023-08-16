@@ -2,13 +2,13 @@
 # Microsoft Software License Terms for Microsoft Quantum Development Kit Libraries
 # and Samples. See LICENSE in the project root for license information.
 
-struct DAGTopologicalVisitor{T <: Integer}
-    dag :: LightGraphs.SimpleDiGraph{T}
-    visited :: Vector{Bool}
-    frontier :: Set{T}
+struct DAGTopologicalVisitor{T<:Integer}
+    dag::LightGraphs.SimpleDiGraph{T}
+    visited::Vector{Bool}
+    frontier::Set{T}
 end
 
-function DAGTopologicalVisitor(dag :: LightGraphs.SimpleDiGraph{T}) where T <: Integer
+function DAGTopologicalVisitor(dag::LightGraphs.SimpleDiGraph{T}) where {T<:Integer}
     visited = fill(false, LightGraphs.nv(dag))
     frontier = Set{T}()
 
@@ -20,13 +20,13 @@ function DAGTopologicalVisitor(dag :: LightGraphs.SimpleDiGraph{T}) where T <: I
     DAGTopologicalVisitor(dag, visited, frontier)
 end
 
-function isfrontier(dag :: LightGraphs.SimpleDiGraph{T}, visited :: Vector{Bool}, v :: T) where T <: Integer
+function isfrontier(dag::LightGraphs.SimpleDiGraph{T}, visited::Vector{Bool}, v::T) where {T<:Integer}
     # Check if all inneighbors have been visited
     return all(getindex(visited, LightGraphs.inneighbors(dag, v)))
 end
 
-isfrontier(dagvisitor :: DAGTopologicalVisitor{T}, v :: T) where T = isfrontier(dagvisitor.dag, dagvisitor.visited, v)
-function visit!(dagvisitor :: DAGTopologicalVisitor{T}, v :: T) where T
+isfrontier(dagvisitor::DAGTopologicalVisitor{T}, v::T) where {T} = isfrontier(dagvisitor.dag, dagvisitor.visited, v)
+function visit!(dagvisitor::DAGTopologicalVisitor{T}, v::T) where {T}
     pop!(dagvisitor.frontier, v)
     dagvisitor.visited[v] = true
 
@@ -38,7 +38,7 @@ function visit!(dagvisitor :: DAGTopologicalVisitor{T}, v :: T) where T
 end
 
 "Topologically sort the the vertices in the given DAG"
-function topological_sort(dag :: LightGraphs.SimpleDiGraph{T}) :: Vector{T} where T <: Integer
+function topological_sort(dag::LightGraphs.SimpleDiGraph{T})::Vector{T} where {T<:Integer}
     sorted = Vector{T}()
     sizehint!(sorted, LightGraphs.nv(dag))
 
@@ -57,8 +57,8 @@ end
 
 "Find all vertices in the DAG that do not have unvisited predecessors"
 function layers(
-    dag :: LightGraphs.SimpleDiGraph{T};
-) :: Vector{Vector{T}} where T <: Integer
+    dag::LightGraphs.SimpleDiGraph{T};
+)::Vector{Vector{T}} where {T<:Integer}
     layers = Vector{Vector{T}}()
     visitor = DAGTopologicalVisitor(dag)
 

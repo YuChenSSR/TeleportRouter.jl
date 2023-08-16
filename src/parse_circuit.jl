@@ -4,21 +4,21 @@
 
 abstract type AbstractOp end
 struct Op <: AbstractOp
-    id :: Int
-    op :: String
-    qubits :: Vector{Int}
+    id::Int
+    op::String
+    qubits::Vector{Int}
 end
 
 struct MappedOp <: AbstractOp
-    id :: Int
-    op :: String
-    qubits :: Vector{Int}
-    path :: Vector{Int}
+    id::Int
+    op::String
+    qubits::Vector{Int}
+    path::Vector{Int}
 end
-MappedOp(op :: Op, path :: Vector{Int}) = MappedOp(op.id, op.op, op.qubits, path)
-Op(mappedOp :: MappedOp) = Op(mappedOp.id, mappedOp.op, mappedOp.qubits)
+MappedOp(op::Op, path::Vector{Int}) = MappedOp(op.id, op.op, op.qubits, path)
+Op(mappedOp::MappedOp) = Op(mappedOp.id, mappedOp.op, mappedOp.qubits)
 
-function parse_circuit(io:: IO) :: Tuple{Vector{Op}, Vector{Vector{Int}}}
+function parse_circuit(io::IO)::Tuple{Vector{Op},Vector{Vector{Int}}}
     parsed = JSON.parse(io)
 
     # Assume ids are sequential
@@ -39,7 +39,7 @@ end
 """
     Parse a JSON file from io to vector of MappedOps
 """
-function parse_mapped_circuit(io:: IO) :: Vector{Vector{Vector{MappedOp}}}
+function parse_mapped_circuit(io::IO)::Vector{Vector{Vector{MappedOp}}}
     parsed = JSON.parse(io)
 
     # Assume ids are sequential
@@ -57,12 +57,12 @@ function parse_mapped_circuit(io:: IO) :: Vector{Vector{Vector{MappedOp}}}
         end
     end
 
-    return ops 
+    return ops
 end
 
-function dag_circuit(ops :: Vector{<:AbstractOp}, dependent_on :: Vector{Vector{Int}}) :: LightGraphs.SimpleDiGraph
+function dag_circuit(ops::Vector{<:AbstractOp}, dependent_on::Vector{Vector{Int}})::LightGraphs.SimpleDiGraph
     dag = LightGraphs.SimpleDiGraph(length(ops))
-    predecessor = Dict{Int, Int}()
+    predecessor = Dict{Int,Int}()
 
     for (i, op) in enumerate(ops)
         for qubit in op.qubits

@@ -22,18 +22,18 @@ end
 
 """Convert an ID to an ID on the scaled grid with ancilla."""
 function ancilla_grid_id(id::Int, width::Int)::Int
-    scaled_width = 2 * (width+2) - 1
+    scaled_width = 2 * (width + 2) - 1
     x = 2 * ((id - 1) % width) + 3 # Add two columns left of every id
     y = 2 * ((id - 1) ÷ width) + 3 # Add two rows above every id
     return x + (y - 1) * scaled_width
 end
 
-function snake_id(id :: Int, width :: Int)
-    if iseven((id-1) ÷ width)
+function snake_id(id::Int, width::Int)
+    if iseven((id - 1) ÷ width)
         return id
     else
-        y = (id-1) ÷ width
-        x = width - ((id-1) % width)
+        y = (id - 1) ÷ width
+        x = width - ((id - 1) % width)
         return x + y * width
     end
 end
@@ -46,8 +46,8 @@ The boundary will add one row and column of logical qubits (with ancilla separat
 it from the bulk of the grid).
 """
 function ancilla_grid(
-    sources :: Vector{Int},
-    destinations :: Vector{Int},
+    sources::Vector{Int},
+    destinations::Vector{Int},
     width::Int,
     height::Int,
 )::DiGraph{Int}
@@ -75,7 +75,7 @@ function ancilla_grid(
     # Add boundary vertices as destinations
     # Rows
     append!(scaled_destinations, 1:2:scaled_width)
-    append!(scaled_destinations, nv(graph):-2:(nv(graph) - scaled_width))
+    append!(scaled_destinations, nv(graph):-2:(nv(graph)-scaled_width))
     # Columns
     append!(scaled_destinations, 1:scaled_width:nv(graph))
     append!(scaled_destinations, scaled_width:scaled_width:nv(graph))
@@ -118,10 +118,10 @@ end
 """Give the list of logical boundary qubits in a given graph
 
 Note that the width should be include ancilla and boundary"""
-function boundary_qubits(width::Int, height::Int) :: Vector{Int}
+function boundary_qubits(width::Int, height::Int)::Vector{Int}
     nrnodes = width * height
     qs = collect(1:2:width)
-    append!(qs, height * width:-2:(height-1)*width)
+    append!(qs, height*width:-2:(height-1)*width)
     append!(qs, 1:2*width:nrnodes)
     append!(qs, width:2*width:nrnodes)
     return unique(qs)
@@ -135,23 +135,23 @@ in the same time step using constant time.
 The schedule consists of multiple such time steps
 """
 function apply_disjoint_cnots(
-    cnots:: Vector{Tuple{Int,Int}},
+    cnots::Vector{Tuple{Int,Int}},
     graph;
-    greedier = false,
-    heuristic_dist = (n,y) -> 0
-) :: Vector{Path}
+    greedier=false,
+    heuristic_dist=(n, y) -> 0
+)::Vector{Path}
     @assert length(Set(Iterators.flatten(cnots))) == 2 * length(cnots) "cnots aren't disjoint"
     if greedier
         greedier_edp(
             graph,
             cnots;
-            heuristic_dist = heuristic_dist,
+            heuristic_dist=heuristic_dist
         )
     else
         greedy_edp(
             graph,
             cnots;
-            heuristic_dist = heuristic_dist,
+            heuristic_dist=heuristic_dist
         )
     end
 end
@@ -159,10 +159,10 @@ end
 """Apply a cnot to a boundary qubit for a boundary operation
 """
 function apply_boundary_ops(
-    qubits :: Vector{Int},
-    boundary :: Vector{Int},
+    qubits::Vector{Int},
+    boundary::Vector{Int},
     graph,
-) :: Vector{Path}
+)::Vector{Path}
     if isempty(qubits)
         return Path[]
     end
@@ -212,15 +212,17 @@ end
     needs to be surrounded by appropriate Hadamard gates that add a bit of time cost.
     One set of operations can be executed in constant time. Therefore, this is sufficient
     information to upper bound the total time cost of running the operations in ops.
+
+    `width` and `height` specify the number of logical data qubits in each dimension
 """
 function apply_ops(
-    ops :: Vector{Op},
-    dag :: SimpleDiGraph,
-    width :: Int,
-    height :: Int;
-    greedier = false,
-    snake = false
-) :: Vector{Vector{Vector{MappedOp}}}
+    ops::Vector{Op},
+    dag::SimpleDiGraph,
+    width::Int,
+    height::Int;
+    greedier=false,
+    snake=false
+)::Vector{Vector{Vector{MappedOp}}}
     @assert width >= 2
     @assert height >= 2
     schedule = Vector{Vector{Vector{MappedOp}}}()
@@ -244,7 +246,7 @@ function apply_ops(
     # Since the EDP schedule is unidirectional and we have Hadamards anyway,
     # we do not care about distinguishing CX, cxX, and cz
     binop_names = ("CX", "cxX", "cz")
-    boundary_names = ("tz","tx","sz","sx")
+    boundary_names = ("tz", "tx", "sz", "sx")
 
     # Translate qubit ids to snake allocation
     if snake
@@ -274,7 +276,7 @@ function apply_ops(
             append!(sources, [bounop.qubits[1] for bounop in bounops])
             destinations = [binop.qubits[2] for binop in binops]
             graph = ancilla_grid(sources, destinations, width, height)
-            boundary = boundary_qubits(2*(width + 2) - 1, 2*(height + 2) - 1)
+            boundary = boundary_qubits(2 * (width + 2) - 1, 2 * (height + 2) - 1)
 
             # Apply boundary ops, which are all unary operations
             # Change qubit ids to grid with ancilla
@@ -308,8 +310,8 @@ function apply_ops(
                 ) for binop in binops]
             edp = apply_disjoint_cnots(
                 scaled_terminals, graph;
-                greedier = greedier,
-                heuristic_dist = heuristic_dist)
+                greedier=greedier,
+                heuristic_dist=heuristic_dist)
 
             # Find associated binops and append to schedule
             terminal_pairs = [(path[1], path[end]) for path in edp]
@@ -340,13 +342,13 @@ end
 """Compute a CNOT schedule
 """
 function apply_cnot_circuit(
-    ops :: Vector{Op},
-    dag :: SimpleDiGraph,
-    width :: Int,
-    height :: Int;
-    greedier = false,
-    snake = false
-) :: Vector{Vector{MappedOp}}
+    ops::Vector{Op},
+    dag::SimpleDiGraph,
+    width::Int,
+    height::Int;
+    greedier=false,
+    snake=false
+)::Vector{Vector{MappedOp}}
     @assert width >= 2
     @assert height >= 2
     schedule = Vector{Vector{Vector{MappedOp}}}()
@@ -393,8 +395,8 @@ function apply_cnot_circuit(
             ) for op in current_ops]
         edp = apply_disjoint_cnots(
             scaled_terminals, graph;
-            greedier = greedier,
-            heuristic_dist = heuristic_dist)
+            greedier=greedier,
+            heuristic_dist=heuristic_dist)
 
         # Find associated binops and append to schedule
         terminal_pairs = [(path[1], path[end]) for path in edp]
@@ -413,7 +415,7 @@ function apply_cnot_circuit(
 end
 
 function schedule_counts(
-    schedule :: Vector{Vector{Vector{MappedOp}}}
+    schedule::Vector{Vector{Vector{MappedOp}}}
 )
     hadamards = 0
     vdps = 0
@@ -426,8 +428,8 @@ function schedule_counts(
         # Check if any gate in layer needs Hadamard
         needed_hadamard = false
         hadamard_qubits = Set(q for step in layer
-            for op in step if op.op in HADAMARD_OPS
-            for q in op.qubits)
+                              for op in step if op.op in HADAMARD_OPS
+                              for q in op.qubits)
         for q in eachindex(prev_hadamard)
             if !xor(prev_hadamard[q], q in hadamard_qubits)
                 # Hadamards cancel or no Hadamard
@@ -468,5 +470,5 @@ function schedule_counts(
             end
         end
     end
-    return (hadamards = hadamards, vdps = vdps, edps = edps)
+    return (hadamards=hadamards, vdps=vdps, edps=edps)
 end

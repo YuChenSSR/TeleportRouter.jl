@@ -5,7 +5,7 @@
 using TeleportRouter
 using JSON
 
-function parse_circuit(str :: String)
+function parse_circuit(str::String)
     line_re = r"^([A-Za-z]+) q\[([0-9]+)\](?:,q\[([0-9]+)\])?;$"
     lines = split(str, "\n")[2:end-1] # Remove blank end line and qreg first line
     id = 1
